@@ -1,1 +1,5 @@
 *.o
+Objects
+keil_project/Objects/misc.d
+keil_project/Objects/stm32f10x_flash.crf
+keil_project/Objects/ExtDll.iex

@@ -3,6 +3,7 @@
 #include "stm32f10x_usart.h"
 #include "stdio.h"
 #include "stm32f10x_flash.h"
+#include "stdbool.h"
 
 #define FLASH_APP_ADDR (0x08010000)
 
@@ -42,8 +43,8 @@ int main(void)
 	
 	GPIO_Init(GPIOC, &gpio);
 	
-	GPIO_ResetBits(GPIOC,GPIO_Pin_13);
-	//GPIO_SetBits(GPIOC,GPIO_Pin_13);
+//	GPIO_ResetBits(GPIOC,GPIO_Pin_13);
+	GPIO_SetBits(GPIOC,GPIO_Pin_13);
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
@@ -75,7 +76,7 @@ int main(void)
 //		while(!USART_GetFlagStatus(USART1,USART_FLAG_RXNE));
 //		c = USART_ReceiveData(USART1);
 		Delay_ms(1000);
-		printf("%ud",sys_cnt_ms);
+		printf("%u\n",sys_cnt_ms);
 	}
 }
 
@@ -143,7 +144,14 @@ void test_flash_bank(void)
 	FLASH_ErasePage(FLASH_APP_ADDR);
 	ret = FLASH_WriteBank(data,FLASH_APP_ADDR,11);
 	FLASH_Lock();
-	printf("ret %d\n",ret);
+	if(ret)
+	{
+			printf("write success\n");
+	}else
+	{
+		  printf("write failed\n");
+	}
+
 }
 
 
@@ -157,10 +165,10 @@ u32 FLASH_WriteBank(u8 *pData, u32 addr, u16 size)
         FLASH_ProgramHalfWord(temp, *pDataTemp);
         if (*pDataTemp != *(vu16 *)temp)
         {
-            return FALSE;
+            return false;
         }
     }
 
-    return TRUE;
+    return true;
 }
 
