@@ -1,4 +1,5 @@
 *.o
+*.bin
 Objects
 keil_project/Objects/misc.d
 keil_project/Objects/stm32f10x_flash.crf
