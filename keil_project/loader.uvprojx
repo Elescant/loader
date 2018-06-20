@@ -391,6 +391,26 @@
               <FileType>1</FileType>
               <FilePath>.\flash.c</FilePath>
             </File>
+            <File>
+              <FileName>ymodem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ymodem.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\sys.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -1,10 +1,21 @@
 #include "stm32f10x_gpio.h"
+#include "stdio.h"
+#include "uart.h"
+#include "sys.h"
 
-void SysTick_Init(void);
-__IO uint32_t sys_cnt_ms=0;
+void Uart_RevHandler(u8 byte);
+
+
+
+static u8 uart_revbuf[1028]={0};
+u16 rev_cnt=0;
+char filename[16]={0};
+char filesize[16]={0};
+u8 *fileptr;
 
 int main()
 {
+	int i=0;
 	GPIO_InitTypeDef gpio;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);
@@ -17,54 +28,47 @@ int main()
 	
 	SysTick_Init();
 	SysTick_Cmd(ENABLE);
+	
+	Uart_Init(Uart_RevHandler);
 	__enable_irq();
 	while(1)
 	{
+		Delay_ms(5000);
+		printf("C");
 		GPIO_ResetBits(GPIOC,GPIO_Pin_13);
 		Delay_ms(500);
 		GPIO_SetBits(GPIOC,GPIO_Pin_13);
 		Delay_ms(500);
+		if(rev_cnt)
+		{
+			printf("rev %d bytes\n",rev_cnt);
+			fileptr = uart_revbuf + 3;
+			for(i=0; (i<16)&&(*fileptr!=0);i++)
+			{
+				filename[i] = *fileptr;
+				fileptr++;
+			}
+			fileptr[i]='\0';
+			printf("file name :%s\n",filename);
+			for(i=0,fileptr++;(*fileptr!=' ') && i<16;)
+			{
+				filesize[i++] = *fileptr++;
+			}
+			filesize[i++]='\0';
+			printf("file size %s\n",filesize);
+		}
 	}
 }
 
 
 
-void SysTick_Init(void)
+void Uart_RevHandler(u8 byte)
 {
-	if(SysTick_Config(SystemCoreClock/1000))
+	//printf("%c",byte);//printf("%c\n",byte);加上换行符后，接收多字节，程序容易挂掉
+	if(rev_cnt<1028)
 	{
-		while(1);
+		uart_revbuf[rev_cnt] = byte;
+		rev_cnt++;
 	}
-	SysTick->CTRL &=~SysTick_CTRL_ENABLE_Msk;
 }
-
-void SysTick_Cmd(FunctionalState newstate)
-{
-	if(newstate)
-	{
-		SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
-	}
-	else
-	{
-		SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	}
-	sys_cnt_ms = 0;
-}
-
-u32 get_sys_ms(void)
-{
-	return sys_cnt_ms;
-}
-
-void Delay_ms(__IO u32 nMs)
-{
-	uint32_t cur = get_sys_ms();
-	while(get_sys_ms() - cur < nMs);
-}
-
-void SysTick_Handler(void)
-{
-	sys_cnt_ms++;
-}
-
 

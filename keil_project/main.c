@@ -5,29 +5,29 @@
 #include "stm32f10x_flash.h"
 #include "stdbool.h"
 #include "flash.h"
+#include "uart.h"
+#include "sys.h"
+#include "ymodem.h"
 
 #define FLASH_APP_ADDR (0x08010000)
 
-__IO uint32_t sys_cnt_ms=0;
 
-void Delay_ms(__IO u32 nMs);
-void SysTick_Init(void);
-u32 get_sys_ms(void);
 void test_flash_bank(void);
-void SysTick_Cmd(FunctionalState newstate);
-//u16 Flash_WriteBank(u32 addr,void *pdat,u16 nbytes);
+
 u32 FLASH_WriteBank(u8 *pData, u32 addr, u16 size);
 void iap_write_appbin(u32 appxaddr,u8 *appbuf,u32 appsize);
 void iap_load_app(u32 appxaddr);
 
 typedef void (*iapfun)(void);
 iapfun jump2app;
+void USART1_UserHandler(u8 data);
 
-__asm void MSR_MSP(u32 addr)
-{
-	MSR MSP,r0
-	BX r14
-}
+
+//__asm void MSR_MSP(u32 addr)
+//{
+//	MSR MSP,r0
+//	BX r14
+//}
 
 //__set_MSP(*(__IO uint32_t *)1234);
 
@@ -35,6 +35,27 @@ u8 RxBuf[4096];
 u16 bufcnt=0;
 bool update=false;
 u16 applen=0;
+
+
+#define YM_FILE_INFO            (2)
+#define YM_FILE_DATA            (1)
+#define YM_VOIDER               (0)
+#define YM_EXIT                 (-1)
+
+#define USART1_BUFF_LANGTH     1048
+
+typedef struct {
+	u32 len;
+	u16 ind;	
+	u8  buf[USART1_BUFF_LANGTH];
+}SerialBuffType;		//·￠?í?Y′???
+#define SerialBuffDefault() {\
+	{0,},\
+	0,\
+	0,\
+}
+
+static volatile SerialBuffType m_ReceData = SerialBuffDefault();
 
 
 int main(void)
@@ -52,79 +73,92 @@ int main(void)
 	
 	GPIO_Init(GPIOC, &gpio);
 	
-	//GPIO_ResetBits(GPIOC,GPIO_Pin_13);
-	GPIO_SetBits(GPIOC,GPIO_Pin_13);
+
+	GPIO_ResetBits(GPIOC,GPIO_Pin_13);
 	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);
+
 	
-	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
-	gpio.GPIO_Pin = GPIO_Pin_9;
-	GPIO_Init(GPIOA,&gpio);
+	gpio.GPIO_Pin = GPIO_Pin_7;
+	gpio.GPIO_Mode = GPIO_Mode_IPU;
+	gpio.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC,&gpio);
 	
-	gpio.GPIO_Pin = GPIO_Pin_10;
-	gpio.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOA,&gpio);
-	
-	usart.USART_BaudRate = 115200;
-	usart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	usart.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	usart.USART_Parity = USART_Parity_No;
-	usart.USART_StopBits = USART_StopBits_1;
-	usart.USART_WordLength = USART_WordLength_8b;
-	
-	NVIC_InitTypeDef nvic;
-	nvic.NVIC_IRQChannel = USART1_IRQn;
-	nvic.NVIC_IRQChannelCmd = ENABLE;
-	nvic.NVIC_IRQChannelPreemptionPriority = 3;
-	nvic.NVIC_IRQChannelSubPriority = 3;
-	NVIC_Init(&nvic);
-	
-	USART_ITConfig(USART1,USART_IT_RXNE,ENABLE);
-	
-	USART_Init(USART1, &usart);
-	USART_Cmd(USART1,ENABLE);
 
 	SysTick_Init();
 	SysTick_Cmd(ENABLE);
 	
 //	test_flash_bank();
+	Uart_Init(USART1_UserHandler);
 	
 	u16 oldcnt=0;
 
-//	__disable_irq();
-//	 vu32 temp = *(vu32*)(FLASH_APP_ADDR+4);
-//	if((temp&0xFF000000)==0x08000000)//判断是否为0X08XXXXXX.
-//	{	 
-//		iap_load_app(FLASH_APP_ADDR);//执行FLASH APP代码
-//	}
-
-
+	
+	int len=0;
+	int len2=0;
+	u8 pArray[1028] = {0,};
+	u8 u_buf[1048]={0,};
 	while(1)
 	{
-		Delay_ms(10);
-		if(bufcnt)
+		switch(YmodemReceive((char *)m_ReceData.buf, &m_ReceData.len, (char *)pArray, &len))
 		{
-			if(bufcnt == oldcnt)
+			case YM_FILE_INFO:
+					printf("start");
+				break;
+			case YM_FILE_DATA:
+					printf("%d",len);
+				break;
+			case YM_EXIT:
+					printf("end");
+				break;
+		}
+		if(m_ReceData.ind !=0 && m_ReceData.len != m_ReceData.ind)//刚开始都为0，ind不为0，说明有接收到数据
+		{
+			if(IS_TIME_OUT(FrameTimeOver,100))
 			{
-				printf("接收完成,%d 字节\n",bufcnt);
-				applen = bufcnt;
-				update = true;
-				bufcnt = 0;
-				oldcnt = 0;
-			}else
-			{
-				oldcnt = bufcnt;
+				m_ReceData.len = m_ReceData.ind;
+				m_ReceData.ind = 0;
 			}
 		}
-		if(update)
-		{
-			update = false;
-			printf("开始更新\n");
-			__disable_irq();
-			iap_write_appbin(FLASH_APP_ADDR,RxBuf,applen);
-			iap_load_app(FLASH_APP_ADDR);
+	}
+
+	if(GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_7) != RESET)
+	{
+		__disable_irq();
+		 vu32 temp = *(vu32*)(FLASH_APP_ADDR+4);
+		if((temp&0xFF000000)==0x08000000)//判断是否为0X08XXXXXX.
+		{	 
+			iap_load_app(FLASH_APP_ADDR);//执行FLASH APP代码
 		}
+	}else
+	{
+			while(1)
+			{
+				Delay_ms(10);
+				if(bufcnt)
+				{
+					if(bufcnt == oldcnt)
+					{
+						printf("接收完成,%d 字节\n",bufcnt);
+						applen = bufcnt;
+						update = true;
+						bufcnt = 0;
+						oldcnt = 0;
+					}else
+					{
+						oldcnt = bufcnt;
+					}
+				}
+				if(update)
+				{
+					update = false;
+					printf("开始更新\n");
+					__disable_irq();
+					iap_write_appbin(FLASH_APP_ADDR,RxBuf,applen);
+					iap_load_app(FLASH_APP_ADDR);
+				}
+			}
 	}
 }
 
@@ -163,50 +197,9 @@ void iap_write_appbin(u32 appxaddr,u8 *appbuf,u32 appsize)
 	if(i)STMFLASH_Write(fwaddr,iapbuf,i);//将最后的一些内容字节写进去.  
 }
 
-int fputc(int ch,FILE *f)
-{
-	while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);
-	USART_SendData(USART1,(unsigned char)ch);
-	return (ch);
-}
 
-void SysTick_Init(void)
-{
-	if(SysTick_Config(SystemCoreClock/1000))
-	{
-		while(1);
-	}
-	SysTick->CTRL &=~SysTick_CTRL_ENABLE_Msk;
-}
 
-void SysTick_Cmd(FunctionalState newstate)
-{
-	if(newstate)
-	{
-		SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
-	}
-	else
-	{
-		SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	}
-	sys_cnt_ms = 0;
-}
 
-void Delay_ms(__IO u32 nMs)
-{
-	uint32_t cur = get_sys_ms();
-	while(get_sys_ms() - cur < nMs);
-}
-
-void SysTick_Handler(void)
-{
-	sys_cnt_ms++;
-}
-
-u32 get_sys_ms(void)
-{
-	return sys_cnt_ms;
-}
 
 void test_flash_bank(void)
 {
@@ -251,18 +244,16 @@ u32 FLASH_WriteBank(u8 *pData, u32 addr, u16 size)
     return true;
 }
 
-void USART1_IRQHandler(void)
+void USART1_UserHandler(u8 data)
 {
-	u8 res;
-	if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)
-	{
-		res = USART_ReceiveData(USART1);
-		if(bufcnt<4096)
-		{
-			RxBuf[bufcnt] = res;
-			bufcnt++;
-		}
-	}
+    if (m_ReceData.ind >= USART1_BUFF_LANGTH)
+        return;
+        
+    if (m_ReceData.len > 0)
+        return;
+        
+    m_ReceData.buf[m_ReceData.ind++] = data;
+		CLR_TIME_OUT(FrameTimeOver);
 }
 
 
