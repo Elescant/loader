@@ -21,7 +21,7 @@ void iap_load_app(u32 appxaddr);
 typedef void (*iapfun)(void);
 iapfun jump2app;
 void USART1_UserHandler(u8 data);
-
+void USART2_UserHandler(u8 data);
 
 //__asm void MSR_MSP(u32 addr)
 //{
@@ -90,8 +90,8 @@ int main(void)
 	SysTick_Cmd(ENABLE);
 	
 //	test_flash_bank();
-	Uart_Init(USART1_UserHandler);
-	
+	Uart1_Init(USART1_UserHandler);
+	Uart2_Init(USART2_UserHandler);
 	u16 oldcnt=0;
 
 	
@@ -99,18 +99,24 @@ int main(void)
 	int len2=0;
 	u8 pArray[1028] = {0,};
 	u8 u_buf[1048]={0,};
+	
 	while(1)
 	{
 		switch(YmodemReceive((char *)m_ReceData.buf, &m_ReceData.len, (char *)pArray, &len))
 		{
 			case YM_FILE_INFO:
-					printf("start");
+				printf("file info:\n");
+				for(int i=0;i<len;i++)
+				{
+					printf("%c",pArray[i]);
+				}
+				
 				break;
 			case YM_FILE_DATA:
-					printf("%d",len);
+					printf("data");
 				break;
 			case YM_EXIT:
-					printf("end");
+				printf("Exit\n");
 				break;
 		}
 		if(m_ReceData.ind !=0 && m_ReceData.len != m_ReceData.ind)//刚开始都为0，ind不为0，说明有接收到数据
@@ -255,5 +261,11 @@ void USART1_UserHandler(u8 data)
     m_ReceData.buf[m_ReceData.ind++] = data;
 		CLR_TIME_OUT(FrameTimeOver);
 }
-
-
+void USART2_UserHandler(u8 data)
+{
+	printf("%c",data);
+}
+	
+	
+	
+	

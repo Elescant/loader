@@ -15,6 +15,10 @@ extern vu32 TimerCnt[MaxTimeCnt];
 #define IS_TIME_OUT(num,timeMs) (get_sys_ms()-TimerCnt[(num)]>(timeMs)?true:false)
 #define CLR_TIME_OUT(num) (TimerCnt[num]=get_sys_ms())
 
-#define IS_TIMEOUT_1MS(index,count) ( ((TimerCnt[index] - get_sys_ms())>count) ? ((TimerCnt[index] = get_sys_ms()) == TimerCnt[index]):false)
+//#define IS_TIMEOUT_1MS(index,count) ( (get_sys_ms() - TimerCnt[index])>count ? ((TimerCnt[index] = get_sys_ms())>0):false)
+
+#define IS_TIMEOUT_1MS(index, count)    (get_sys_ms()-(TimerCnt[(u16)(index)]) >= (count)? true:false)
+                                 
+
 
 #endif

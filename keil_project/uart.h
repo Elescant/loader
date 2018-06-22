@@ -5,7 +5,8 @@
 #include "stm32f10x.h"
 
 typedef void (*Uart_RecvByteCb)(u8 data);
-void Uart_Init(Uart_RecvByteCb fun);
+void Uart1_Init(Uart_RecvByteCb fun);
+void Uart2_Init(Uart_RecvByteCb fun);
 void BspUsart1Send(u8 *buf, u16 len);
 u16 BspUsart1Receive(u8 *buf);
 #endif

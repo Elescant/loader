@@ -226,7 +226,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
         sErrorCount = 0;   
         affirmCount = 0;
         stat = eYM_RECE_HEAD_PACKET;
-        IS_TIMEOUT_1MS(eTimYModem, 0);          //清超时计数器
+        CLR_TIME_OUT(eTimYModem);          //清超时计数器
         break;
 
     case eYM_RECE_HEAD_PACKET:
@@ -274,7 +274,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
             YmodemSendChar(NAK, &stat, &sErrorCount);           //错误应答
             break;
         }
-        IS_TIMEOUT_1MS(eTimYModem, 0);                          //清超时计数器
+        CLR_TIME_OUT(eTimYModem);                          //清超时计数器
         break;
         
     case eYM_RECE_DATA_START:
@@ -323,7 +323,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
             YmodemSendChar(NAK, &stat, &sErrorCount);       //错误应答
             break;
         } 
-        IS_TIMEOUT_1MS(eTimYModem, 0);                      //清超时计数器        
+        CLR_TIME_OUT(eTimYModem);                      //清超时计数器        
         break;
         
     case eYM_END:
