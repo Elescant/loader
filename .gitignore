@@ -5,3 +5,5 @@ keil_project/Objects/misc.d
 keil_project/Objects/stm32f10x_flash.crf
 keil_project/Objects/ExtDll.iex
 keil_project/JLinkLog.txt
+keil_project/JLinkLog.txt
+keil_project/DebugConfig/loader_STM32F103RC_1.0.0.dbgconf
