@@ -66,6 +66,7 @@ int main(void)
 	{
 		printf("请通过Ymodem传输更新文件\n");
 		file_get_by_ymodem();
+		Delay_ms(1000);
 		__disable_irq();
 		iap_load_app(FLASH_APP_ADDR);
 	}

@@ -48,6 +48,9 @@ Section Cross References
     stm32f10x_gpio.o(i.GPIO_DeInit) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphResetCmd) for RCC_APB2PeriphResetCmd
     stm32f10x_rcc.o(i.RCC_GetClocksFreq) refers to stm32f10x_rcc.o(.data) for APBAHBPrescTable
     stm32f10x_rcc.o(i.RCC_WaitForHSEStartUp) refers to stm32f10x_rcc.o(i.RCC_GetFlagStatus) for RCC_GetFlagStatus
+    stm32f10x_usart.o(i.USART_DeInit) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphResetCmd) for RCC_APB2PeriphResetCmd
+    stm32f10x_usart.o(i.USART_DeInit) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphResetCmd) for RCC_APB1PeriphResetCmd
+    stm32f10x_usart.o(i.USART_Init) refers to stm32f10x_rcc.o(i.RCC_GetClocksFreq) for RCC_GetClocksFreq
     startup_stm32f10x_hd.o(RESET) refers to startup_stm32f10x_hd.o(STACK) for __initial_sp
     startup_stm32f10x_hd.o(RESET) refers to startup_stm32f10x_hd.o(.text) for Reset_Handler
     startup_stm32f10x_hd.o(RESET) refers to sys.o(i.SysTick_Handler) for SysTick_Handler
@@ -58,9 +61,6 @@ Section Cross References
     system_stm32f10x.o(i.SetSysClock) refers to system_stm32f10x.o(i.SetSysClockTo72) for SetSysClockTo72
     system_stm32f10x.o(i.SystemCoreClockUpdate) refers to system_stm32f10x.o(.data) for SystemCoreClock
     system_stm32f10x.o(i.SystemInit) refers to system_stm32f10x.o(i.SetSysClock) for SetSysClock
-    stm32f10x_usart.o(i.USART_DeInit) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphResetCmd) for RCC_APB2PeriphResetCmd
-    stm32f10x_usart.o(i.USART_DeInit) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphResetCmd) for RCC_APB1PeriphResetCmd
-    stm32f10x_usart.o(i.USART_Init) refers to stm32f10x_rcc.o(i.RCC_GetClocksFreq) for RCC_GetClocksFreq
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry10a.o(.ARM.Collect$$$$0000000D) for __rt_final_cpp
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry11a.o(.ARM.Collect$$$$0000000F) for __rt_final_exit
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry7b.o(.ARM.Collect$$$$00000008) for _main_clock
@@ -404,11 +404,6 @@ Removing Unused input sections from the image.
     Removing stm32f10x_rcc.o(i.RCC_USBCLKConfig), (12 bytes).
     Removing stm32f10x_rcc.o(i.RCC_WaitForHSEStartUp), (56 bytes).
     Removing stm32f10x_rcc.o(.data), (20 bytes).
-    Removing startup_stm32f10x_hd.o(HEAP), (512 bytes).
-    Removing system_stm32f10x.o(.rev16_text), (4 bytes).
-    Removing system_stm32f10x.o(.revsh_text), (4 bytes).
-    Removing system_stm32f10x.o(.rrx_text), (6 bytes).
-    Removing system_stm32f10x.o(i.SystemCoreClockUpdate), (164 bytes).
     Removing stm32f10x_usart.o(.rev16_text), (4 bytes).
     Removing stm32f10x_usart.o(.revsh_text), (4 bytes).
     Removing stm32f10x_usart.o(.rrx_text), (6 bytes).
@@ -438,6 +433,11 @@ Removing Unused input sections from the image.
     Removing stm32f10x_usart.o(i.USART_SmartCardNACKCmd), (24 bytes).
     Removing stm32f10x_usart.o(i.USART_StructInit), (24 bytes).
     Removing stm32f10x_usart.o(i.USART_WakeUpConfig), (18 bytes).
+    Removing startup_stm32f10x_hd.o(HEAP), (512 bytes).
+    Removing system_stm32f10x.o(.rev16_text), (4 bytes).
+    Removing system_stm32f10x.o(.revsh_text), (4 bytes).
+    Removing system_stm32f10x.o(.rrx_text), (6 bytes).
+    Removing system_stm32f10x.o(i.SystemCoreClockUpdate), (164 bytes).
     Removing dadd.o(.text), (334 bytes).
     Removing dmul.o(.text), (228 bytes).
     Removing ddiv.o(.text), (222 bytes).
@@ -455,35 +455,35 @@ Image Symbol Table
 
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
-    ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf4.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf8.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
     ../clib/microlib/printf/stubs.s          0x00000000   Number         0  stubs.o ABSOLUTE
     ../clib/microlib/stdio/streams.c         0x00000000   Number         0  stdout.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
@@ -730,7 +730,7 @@ Memory Map of the image
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x08010000   0x08010000   0x00000130   Data   RO          591    RESET               startup_stm32f10x_hd.o
+    0x08010000   0x08010000   0x00000130   Data   RO          783    RESET               startup_stm32f10x_hd.o
     0x08010130   0x08010130   0x00000000   Code   RO          834  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
     0x08010130   0x08010130   0x00000004   Code   RO         1098    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
     0x08010134   0x08010134   0x00000004   Code   RO         1101    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
@@ -740,7 +740,7 @@ Memory Map of the image
     0x08010140   0x08010140   0x00000000   Code   RO         1108    .ARM.Collect$$$$0000000D  mc_w.l(entry10a.o)
     0x08010140   0x08010140   0x00000000   Code   RO         1110    .ARM.Collect$$$$0000000F  mc_w.l(entry11a.o)
     0x08010140   0x08010140   0x00000004   Code   RO         1099    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
-    0x08010144   0x08010144   0x00000024   Code   RO          592    .text               startup_stm32f10x_hd.o
+    0x08010144   0x08010144   0x00000024   Code   RO          784    .text               startup_stm32f10x_hd.o
     0x08010168   0x08010168   0x00000024   Code   RO         1128    .text               mc_w.l(init.o)
     0x0801018c   0x0801018c   0x00000018   Code   RO            4    i.Delay_ms          sys.o
     0x080101a4   0x080101a4   0x00000116   Code   RO          260    i.GPIO_Init         stm32f10x_gpio.o
@@ -748,17 +748,17 @@ Memory Map of the image
     0x080102be   0x080102be   0x00000004   Code   RO          268    i.GPIO_SetBits      stm32f10x_gpio.o
     0x080102c2   0x080102c2   0x00000002   PAD
     0x080102c4   0x080102c4   0x00000020   Code   RO          384    i.RCC_APB2PeriphClockCmd  stm32f10x_rcc.o
-    0x080102e4   0x080102e4   0x00000008   Code   RO          599    i.SetSysClock       system_stm32f10x.o
-    0x080102ec   0x080102ec   0x000000e0   Code   RO          600    i.SetSysClockTo72   system_stm32f10x.o
+    0x080102e4   0x080102e4   0x00000008   Code   RO          791    i.SetSysClock       system_stm32f10x.o
+    0x080102ec   0x080102ec   0x000000e0   Code   RO          792    i.SetSysClockTo72   system_stm32f10x.o
     0x080103cc   0x080103cc   0x00000030   Code   RO            5    i.SysTick_Cmd       sys.o
     0x080103fc   0x080103fc   0x00000010   Code   RO            6    i.SysTick_Handler   sys.o
     0x0801040c   0x0801040c   0x00000078   Code   RO            7    i.SysTick_Init      sys.o
-    0x08010484   0x08010484   0x00000060   Code   RO          602    i.SystemInit        system_stm32f10x.o
+    0x08010484   0x08010484   0x00000060   Code   RO          794    i.SystemInit        system_stm32f10x.o
     0x080104e4   0x080104e4   0x00000038   Code   RO          106    i.USART1_IRQHandler  uart.o
     0x0801051c   0x0801051c   0x00000038   Code   RO          107    i.USART2_IRQHandler  uart.o
-    0x08010554   0x08010554   0x00000012   Code   RO          645    i.USART_ClearFlag   stm32f10x_usart.o
-    0x08010566   0x08010566   0x00000054   Code   RO          653    i.USART_GetITStatus  stm32f10x_usart.o
-    0x080105ba   0x080105ba   0x0000000a   Code   RO          663    i.USART_ReceiveData  stm32f10x_usart.o
+    0x08010554   0x08010554   0x00000012   Code   RO          592    i.USART_ClearFlag   stm32f10x_usart.o
+    0x08010566   0x08010566   0x00000054   Code   RO          600    i.USART_GetITStatus  stm32f10x_usart.o
+    0x080105ba   0x080105ba   0x0000000a   Code   RO          610    i.USART_ReceiveData  stm32f10x_usart.o
     0x080105c4   0x080105c4   0x0000000e   Code   RO         1140    i.__scatterload_copy  mc_w.l(handlers.o)
     0x080105d2   0x080105d2   0x00000002   Code   RO         1141    i.__scatterload_null  mc_w.l(handlers.o)
     0x080105d4   0x080105d4   0x0000000e   Code   RO         1142    i.__scatterload_zeroinit  mc_w.l(handlers.o)
@@ -774,8 +774,8 @@ Memory Map of the image
 
     0x20000000   0x08010678   0x0000000c   Data   RW            9    .data               sys.o
     0x2000000c   0x08010684   0x00000008   Data   RW          112    .data               uart.o
-    0x20000014   0x0801068c   0x00000014   Data   RW          603    .data               system_stm32f10x.o
-    0x20000028        -       0x00000400   Zero   RW          589    STACK               startup_stm32f10x_hd.o
+    0x20000014   0x0801068c   0x00000014   Data   RW          795    .data               system_stm32f10x.o
+    0x20000028        -       0x00000400   Zero   RW          781    STACK               startup_stm32f10x_hd.o
 
 
 ==============================================================================

@@ -310,6 +310,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
                 iNumber = 0;
                 stat = eYM_RECE_HEAD_PACKET;
                 YmodemSendChar(ACK, &stat, &sErrorCount);    //正确应答
+                //YmodemSendChar(CRC16,&stat,&sErrorCount);   //add by elescant 发送'C'
             }
             else
             {
