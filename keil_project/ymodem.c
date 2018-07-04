@@ -241,7 +241,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
             break;
   
         cTmp = ReceivePacket(pRece, *sReceLen, pData, sResLen, iNumber & 0xFF);
-        *sReceLen = 0;                  //读完数据后，允许接收新数据
+        pack_get_again();                  //读完数据后，允许接收新数据
         switch (cTmp)
         {
         case TRUE:                      //接收正确
@@ -294,7 +294,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
             break;
   
         cTmp = ReceivePacket(pRece, *sReceLen, pData, sResLen, iNumber & 0xFF);
-        *sReceLen = 0;                  //读完数据后，允许接收新数据
+        pack_get_again();                  //读完数据后，允许接收新数据
         switch (cTmp)
         {
         case TRUE:                      //接收正确
@@ -321,6 +321,7 @@ int YmodemReceive(char *pRece, int *sReceLen, char *pData, int *sResLen)
 
         default:                        //接收数据有误  
             affirmCount = 0;
+            cRes = YM_PACK_ERR;
             YmodemSendChar(NAK, &stat, &sErrorCount);       //错误应答
             break;
         } 

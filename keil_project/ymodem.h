@@ -39,9 +39,11 @@
 #define ABORT1                  (0x41)  /* 'A' == 0x41, abort by user */
 #define ABORT2                  (0x61)  /* 'a' == 0x61, abort by user */
 
-#define NAK_TIMEOUT             (1000)   // 5s
+#define NAK_TIMEOUT             (1000)   // 1s
+#define FRAME_TIMEOUT           (100) //100ms
 #define MAX_ERRORS              (5)
 
+#define YM_PACK_ERR             (3)
 #define YM_FILE_INFO            (2)
 #define YM_FILE_DATA            (1)
 #define YM_VOIDER               (0)

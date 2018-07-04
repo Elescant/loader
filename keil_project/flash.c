@@ -1,5 +1,6 @@
 #include "stm32f10x_flash.h"
 #include "flash.h"
+#include "sys.h"
 
 #if STM32_FLASH_SIZE<256
 #define STM_SECTOR_SIZE 1024 //字节
@@ -15,6 +16,7 @@ void STMFLASH_Write_NoCheck(u32 WriteAddr,u16 *pBuffer,u16 NumToWrite)
 	for(i=0;i<NumToWrite;i++)
 	{
 		FLASH_ProgramHalfWord(WriteAddr,pBuffer[i]);
+		//  Delay_ms(100);
 	    WriteAddr+=2;//地址增加2.
 	}  
 } 

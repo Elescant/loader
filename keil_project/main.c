@@ -50,7 +50,6 @@ int main(void)
 	SysTick_Init();
 	SysTick_Cmd(ENABLE);
 
-	Uart1_Init(USART1_UserHandler);
 	Uart2_Init(USART2_UserHandler);
 
 	if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_7) != RESET)
